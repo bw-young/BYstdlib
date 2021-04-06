@@ -8,8 +8,9 @@ Brennan Young's Standard Library
 | Table | Type | Status | Description |
 | --- | --- | --- | --- |
 | [BinManip](#BinManip) | Functions | stable, incomplete | Functions for reading/writing binary. |
-| [BSTree](#BSTree) | Object | stable | AVL tree, or balanced binary search tree |
+| [BSTree](#BSTree) | Object | stable | AVL tree, or balanced binary search tree. |
 | [CardinalDir](#CardinalDir) | Object | stable | Object for abstracting the concept of directionality in a square-tesselated framework. |
+| [Constraint](#Constraint) | Object | stable | Object for abstracting the concept of numerical constraints (in a dataset, needing to ignore within or without a certain range). |
 | [DataVector](#DataVector) | Object | stable | Object for storing a data type without needing for a template to define type. |
 | [DataTable](#DataTable) | Object | stable | Object for managing a consistent set of DataVectors representing various data types. |
 | [DLL](#DLL) | Object | stable | Doubly-linked list. |
@@ -86,6 +87,10 @@ CardinalDir d(0,1); // initialize to direction from difference in (x,y) -- this 
 | operator- | CardinalDir d | {int} Get the number of 45-degree turns to turn clockwise toward d; negative if counter-clockwise. |
 | x | | {int} Get 1 if direction is toward +x, -1 if toward -x, or 0 otherwise. |
 | y | | {int} Get 1 if direction is toward +y, -1 if toward -y, or 0 otherwise. |
+
+## Constraint
+
+I kept getting annoyed by having to pass 'ignore' or 'range' parameters, so I abstracted it to a Constraint class that represents all of that. If multiple constraints apply to a dataset, put them all in a container and check a value against every constraint. I might create a Constraints class that more efficiently compares/combines constraints.
 
 ## DataVector
 
