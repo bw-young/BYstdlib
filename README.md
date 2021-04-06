@@ -1,9 +1,9 @@
 # BYstdlib
 Brennan Young's Standard Library
 
-<!> This is an ongoing work-in-progress. It is also meant to be a personal educational tool, where I code up things from scratch to learn their ins-and-outs.
+<!> This is an ongoing work-in-progress and a personal educational tool -- I code things up from scratch to learn their ins-and-outs.
 
-<!> And yes, I know that "good style" or convention of whatever gives C++ header files the .hpp extension instead of .h. It's been a long journey for me, and the .h is basically left over from the olden days when I was somehow dumber than I am now.
+<!> And yes, I know that "good style" or convention of whatever gives C++ header files the .hpp extension instead of .h. It's been a long journey for me, and the .h is basically left over from the olden days when I was even dumber than I am now.
 
 | Table | Type | Status | Description |
 | --- | --- | --- | --- |
