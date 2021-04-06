@@ -15,6 +15,7 @@ Brennan Young's Standard Library
 | [DLL](DLL) | Object | stable | Doubly-linked list. |
 | [fuzzy](fuzzy) | Functions | stable | Fuzzy membership functions. |
 | [Geometry](Geometry) | Functions | stable | Functions for managing various miscellaneous aspects of geometry. This is slowly getting phased out. |
+| [Grid](Grid) | Object | stable | Object for interacting with a grid stored in a binary data file. |
 | [integration](integration) | Functions | stable | Functions for calculating the integral of a function. |
 | [interpolate](interpolate) | Functions | stable | Functions for interpolating between values. |
 | [Matrix](Matrix) | Object | stable | Matrix. |
@@ -189,6 +190,54 @@ double logisticSigmoid (double x, double x0, double L, double k);
 ## Geometry
 
 Various geometric functions. Not to be confused with my Geometry library.
+
+## Grid
+
+Grid object for interacting directly with data stored in binary on the disk -- the grid's data is not loaded into memory. This is a useful base class for other grid types.
+
+```cpp
+Grid grid ();                             // create an empty grid handle
+Grid grid (1000, 1000, 1);                // create a grid handle for 1000 rows and columns and 1 band
+Grid grid (Grid::INT, 4, 1000, 1000, 1);  // create a grid handle for 1000 rows and columns and 1 band
+
+Grid newgrid (grid);                      // create a copy of the grid. If it has  a file open, tries to open that file.
+Grid newgrid = grid;                      // create a copy of the grid. If it has a file open, tries to open that file.
+```
+
+| Constant | Description |
+| --- | --- |
+| INT | Signed integer-type. |
+| UINT | Unsigned integer-type. |
+| FLOAT | Floating-point or real type. |
+| BSQ | Band-sequential file format. |
+| BIL | Band interleave-by-line format. |
+| BIP | Band interleave-by-pixel format. |
+
+| Method | Arguments | Description |
+| --- | --- | --- |
+| ***File Access*** | | |
+| open | std::string s | Opens the file with full path and filename s. |
+| close | | Closes the file, if open. |
+| ***Structure Getters*** | | |
+| nrows | | {int} Get the number of rows represented in the grid file. |
+| ncols | | {int} Get the number of columns represented in the grid file. |
+| nbands | | {int} Get the number of bands represented in the grid file. |
+| size | | {int} Get the number of elements in one band (nrows * ncols). |
+| volume | | {int} Get the number of elements in the grid file (size * nbands). |
+| index | int i, int j | Get the index for accessing the element at row i, column j. |
+| index | int i, int j, int k | {int} Get the index for accessing the element at row i, column j, band k. |
+| ***Structure Setters*** | | |
+| setByteSwap | bool b | Set whether values should be byte-swapped when read from/written to the file. |
+| setDimensions | int rows, int cols, int bands | Sets the expected dimensions of the grid. |
+| setInterleave | unsigned char c | Sets the interleave to BSQ, BIL, or BIP, or no change if c is not recognized. |
+| setDataType | unsigned char t, unsigned char s | Sets the data type to one of INT, UINT, or FLOAT with byte-length s for each element, or no change if t is not recognized. |
+| ***Element Access*** | | |
+| get | int i | {double} Get the value of element i, or nan if out of bounds. |
+| get | int i, int j | {double} Get the value of the element at row i, column j, or nan if out of bounds. |
+| get | int i, int j, int k | {double} Get the value of the element at row i, column j, band k, or nan if out of bounds. |
+| set | T x, int i | Set element i to x. |
+| set | T x, int i, int j | Set the element at row i, column j to x. |
+| set | T x, int i, int j, int k | Set the element at row i, column j, band k to x. |
 
 ## Integration
 
