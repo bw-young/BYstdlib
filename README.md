@@ -7,25 +7,25 @@ Brennan Young's Standard Library
 
 | Table | Type | Status | Description |
 | --- | --- | --- | --- |
-| [BinManip](BinManip) | Functions | stable, incomplete | Functions for reading/writing binary. |
-| [BSTree](BSTree) | Object | stable | AVL tree, or balanced binary search tree |
-| [CardinalDir](CardinalDir) | Object | stable | Object for abstracting the concept of directionality in a square-tesselated framework. |
-| [DataVector](DataVector) | Object | stable | Object for storing a data type without needing for a template to define type. |
-| [DataTable](DataTable) | Object | stable | Object for managing a consistent set of DataVectors representing various data types. |
-| [DLL](DLL) | Object | stable | Doubly-linked list. |
-| [fuzzy](fuzzy) | Functions | stable | Fuzzy membership functions. |
-| [Geometry](Geometry) | Functions | stable | Functions for managing various miscellaneous aspects of geometry. This is slowly getting phased out. |
-| [Grid](Grid) | Object | stable | Object for interacting with a grid stored in a binary data file. |
-| [integration](integration) | Functions | stable | Functions for calculating the integral of a function. |
-| [interpolate](interpolate) | Functions | stable | Functions for interpolating between values. |
-| [Matrix](Matrix) | Object | stable | Matrix. |
-| [ProgCounter](ProgCounter) | Object | stable | Object for simplifying progress-tracking through various levels of a program. |
-| [Regression](Regression) | Functions | stable | Regression functions. |
-| [RTree](RTree) | Object | stable-ish | R* tree for spatial indexing. |
-| [setManip](setManip) | Functions | stable | Functions for manipulating std::set objects. |
-| [sort](sort) | Functions | stable | Sorting functions. |
-| [sortedVector](sortedVector) | Functions | stable | Functions for creating and maintaining a sorted vector. |
-| [Statistics](Statistics) | Object | stable | Object for storing and computing basic statistics. |
+| [BinManip](#BinManip) | Functions | stable, incomplete | Functions for reading/writing binary. |
+| [BSTree](#BSTree) | Object | stable | AVL tree, or balanced binary search tree |
+| [CardinalDir](#CardinalDir) | Object | stable | Object for abstracting the concept of directionality in a square-tesselated framework. |
+| [DataVector](#DataVector) | Object | stable | Object for storing a data type without needing for a template to define type. |
+| [DataTable](#DataTable) | Object | stable | Object for managing a consistent set of DataVectors representing various data types. |
+| [DLL](#DLL) | Object | stable | Doubly-linked list. |
+| [fuzzy](#fuzzy) | Functions | stable | Fuzzy membership functions. |
+| [Geometry](#Geometry) | Functions | stable | Functions for managing various miscellaneous aspects of geometry. This is slowly getting phased out. |
+| [Grid](#Grid) | Object | stable | Object for interacting with a grid stored in a binary data file. |
+| [integration](#integration) | Functions | stable | Functions for calculating the integral of a function. |
+| [interpolate](#interpolate) | Functions | stable | Functions for interpolating between values. |
+| [Matrix](#Matrix) | Object | stable | Matrix. |
+| [ProgCounter](#ProgCounter) | Object | stable | Object for simplifying progress-tracking through various levels of a program. |
+| [Regression](#Regression) | Functions | stable | Regression functions. |
+| [RTree](#RTree) | Object | stable-ish | R* tree for spatial indexing. |
+| [setManip](#setManip) | Functions | stable | Functions for manipulating std::set objects. |
+| [sort](#sort) | Functions | stable | Sorting functions. |
+| [sortedVector](#sortedVector) | Functions | stable | Functions for creating and maintaining a sorted vector. |
+| [Statistics](#Statistics) | Object | stable | Object for storing and computing basic statistics. |
 
 ## BinManip
 
