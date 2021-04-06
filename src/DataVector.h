@@ -24,6 +24,10 @@
 // 02/22/2021 - Brennan Young                                      //
 // - constructor now sets nul.                                     //
 // - overloaded setNull to assume no change to current data.       //
+// 03/12/2021 - Brennan Young                                      //
+// - added nullify.                                                //
+// 04/02/2021 - Brennan Young                                      //
+// - updated to new Statistics format.                             //
 /////////////////////////////////////////////////////////////////////
 
 #ifndef YOUNG_DATAVECTOR_20200629
@@ -51,7 +55,7 @@ private:
     size_t n;           // number of elements
     char* data;         // data array
     double nul;         // no-data value
-    Statistics statistics;
+    bystd::Statistics statistics;
     
     void toBytes(char*, char*, int) const;
     void fromBytes(char*, char*, int) const;
@@ -70,7 +74,7 @@ public:
     double operator[](size_t) const;
     
     // getters
-    const Statistics& stats() const;
+    const bystd::Statistics& stats() const;
     size_t size() const;
     unsigned char getType() const;
     unsigned char getLen() const;
@@ -89,6 +93,7 @@ public:
     // operations
     void resize(size_t);
     void zero();
+    void nullify();
     bool isNull(size_t) const;
     bool isNull(double) const;
     void calculateStatistics();
@@ -192,7 +197,7 @@ void DataVector::fromBytes ( char* bytes, char* x, int len ) const
 // GETTERS //////////////////////////////////////////////////////////
 
 // Return the object's statistics object.
-const Statistics& DataVector::stats () const
+const bystd::Statistics& DataVector::stats () const
 {
     return statistics;
 }
@@ -519,6 +524,12 @@ double DataVector::getNull () const
     return nul;
 }
 
+// Set every element of the vector to the no-data value.
+void DataVector::nullify ()
+{
+    for ( size_t i = 0; i < n; ++i ) set(i, nul);
+}
+
 // Determine if the given element is the same as the no-data value.
 bool DataVector::isNull ( size_t i ) const
 {
@@ -533,7 +544,8 @@ bool DataVector::isNull ( double x ) const
 // Compute the vector's statistics.
 void DataVector::calculateStatistics ()
 {
-    statistics = Statistics (*this, 0, this->size(), 1, nul);
+    statistics = bystd::Statistics (*this, 0, this->size(), 1, nul);
+    statistics.middle(*this, 0, this->size(), 1, nul);
 }
 
 

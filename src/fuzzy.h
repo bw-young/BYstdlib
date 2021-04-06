@@ -4,13 +4,34 @@
 
 /////////////////////////////////////////////////////////////////////
 // -- HISTORY ---------------------------------------------------- //
-// 04/11/2020 - Created - Brennan Young                            //
+// 04/11/2020 - Brennan Young                                      //
+// - modified.                                                     //
+// 03/26/2021 - Brennan Young                                      //
+// - added linearMembership.                                       //
 /////////////////////////////////////////////////////////////////////
 
 #ifndef YOUNG_STDLIB_FUZZY_H
 #define YOUNG_STDLIB_FUZZY_H
 
 #include <cmath>
+
+// Linear fuzzy membership.
+// -- Arguments --
+// x : value to transform to membership.
+// a : x-value for membership = 0.
+// b : x-value for membership = 1.
+double linearMembership ( double x, double a, double b )
+{
+    if ( a < b ) {
+        if ( x < a ) return 0;
+        if ( x > b ) return 1;
+    }
+    else {
+        if ( x < b ) return 0;
+        if ( x > a ) return 1;
+    }
+    return (x - a) / (b - a);
+}
 
 // Triangular fuzzy function.
 // -- Arguments --

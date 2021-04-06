@@ -19,6 +19,14 @@
 // - added setNull, getNull, and isNull methods.                   //
 // 03/10/2021 - Brennan Young                                      //
 // - overloaded geti, getf, and getStr to take the field name.     //
+// 03/11/2021 - Brennan Young                                      //
+// - overloaded setNull to take the change argument.               //
+// - changed overloaded isNull to check a value that may not be in //
+//   the table to isValNull.                                       //
+// 03/12/2021 - Brennan Young                                      //
+// - added nullify.                                                //
+// 04/02/2021 - Brennan Young                                      //
+// - updated to new Statistics format.                             //
 /////////////////////////////////////////////////////////////////////
 
 #ifndef YOUNG_DATATABLE_20200629
@@ -42,7 +50,7 @@ public:
     DataTable& operator=(const DataTable&);
     
     // getters
-    const Statistics& stats(size_t) const;
+    const bystd::Statistics& stats(size_t) const;
     size_t numFields() const;
     size_t numRecords() const;
     size_t findField(const std::string&) const;
@@ -62,6 +70,7 @@ public:
     // setters
     template<typename T> void set(size_t, size_t, const T&);
     void setStr(size_t, size_t, const std::string&);
+    void setNull(size_t, double, bool);
     void setNull(size_t, double);
     
     // operations
@@ -76,8 +85,10 @@ public:
     void removeField(const std::string&);
     void setNumRecords(size_t);
     void zero();
+    void nullify(size_t);
+    void nullify();
     bool isNull(size_t, size_t) const;
-    bool isNull(double, size_t) const;
+    bool isValNull(double, size_t) const;
 }; // DataTable
 
 
@@ -113,7 +124,7 @@ DataTable& DataTable::operator= ( const DataTable& t )
 // GETTERS //////////////////////////////////////////////////////////
 
 // Get the statistics for field j.
-const Statistics& DataTable::stats ( size_t j ) const
+const bystd::Statistics& DataTable::stats ( size_t j ) const
 {
     return fields[j].stats();
 }
@@ -223,10 +234,15 @@ void DataTable::setStr ( size_t i, size_t j,
     fields[j].setStr(i, x);
 }
 
-// Set the null value for field j.
+// Set the null value for field j. If change=true, changes existing
+// no-data values to the new one.
+void DataTable::setNull ( size_t j, double x, bool change )
+{
+    fields[j].setNull(x, change);
+}
 void DataTable::setNull ( size_t j, double x )
 {
-    fields[j].setNull(x);
+    setNull(j, x, false);
 }
 
 
@@ -305,13 +321,25 @@ void DataTable::zero ()
     for ( size_t j = 0; j < fields.size(); ++j ) fields[j].zero();
 }
 
+// Set all records in field to their no-data value.
+void DataTable::nullify ( size_t i )
+{
+    fields[i].nullify();
+}
+
+// Set all records to no-data.
+void DataTable::nullify ()
+{
+    for ( size_t i = 0; i < fields.size(); ++i ) nullify(i);
+}
+
 // Report true if the given element is the same value as the no-data
 // value in field j, given either element i or value x.
 bool DataTable::isNull ( size_t i, size_t j ) const
 {
     return fields[j].isNull(i);
 }
-bool DataTable::isNull ( double x, size_t j ) const
+bool DataTable::isValNull ( double x, size_t j ) const
 {
     return fields[j].isNull(x);
 }
