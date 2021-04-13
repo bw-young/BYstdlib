@@ -7,6 +7,8 @@
 // -- History ---------------------------------------------------- //
 // 04/02/2021 - Brennan Young                                      //
 // - created.                                                      //
+// 04/07/2021 - Brennan Young                                      //
+// - added allData static method.                                  //
 /////////////////////////////////////////////////////////////////////
 
 #ifndef YOUNG_CONSTRAINT_20210402
@@ -33,6 +35,9 @@ public:
     // operators
     Constraint& operator=(const Constraint&); // copy
     bool operator()(double) const; // check value against constraint
+    
+    // basic constraints
+    static Constraint allData(){ return Constraint(0,0,false,true); }
 };
 
 
@@ -66,7 +71,7 @@ Constraint& Constraint::operator= ( const Constraint& C )
     return *this;
 }
 
-// Check value against constraint.
+// Check value against constraint - return true if within constraint.
 bool Constraint::operator() ( double value ) const
 {
     bool x = value >= min

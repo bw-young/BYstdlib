@@ -53,6 +53,18 @@
 //   element matrices as scalars.                                  //
 // 03/10/2021 - Brennan Young                                      //
 // - added elemMult and elemDivide.                                //
+// 04/08/2021 - Brennan Young                                      //
+// - added sum.                                                    //
+// - changed pow to raise the matrix to a power; renamed existing  //
+//   pow function to elemPow.                                      //
+// 04/09/2021 - Brennan Young                                      //
+// - added min, max, exp, log.                                     //
+// 04/12/2021 - Brennan Young                                      //
+// - added dot.                                                    //
+// - added randMatrix.                                             //
+// - added elemExp.                                                //
+// - added elemLog.                                                //
+// - added printMatrix.                                            //
 /////////////////////////////////////////////////////////////////////
 
 #ifndef MATRIX_20190118
@@ -123,6 +135,11 @@ public:
 template<typename T> Matrix<T>::Matrix ( int r, int c )
 : nr(r), nc(c), n(r*c)
 {
+    if ( n == 0 ) {
+        std::cout << "0-size matrix!\n";
+        exit(0);
+    }
+    
     try {
         data = new T[n];
     }
@@ -669,6 +686,37 @@ Matrix<T> Matrix<T>::Crout ( const Matrix<T> & z )
 // Non-member Matrix operations /////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 
+// Print the size of the matrix.
+template <typename T>
+void printMatrixSize ( const Matrix<T>& M )
+{
+    std::cout << M.nrows() << "x" << M.ncols() << "\n";
+}
+
+// Print a formatted version of the matrix
+template <typename T>
+void printMatrix ( const Matrix<T>& M )
+{
+    printMatrixSize(M);
+    for ( int i = 0; i < M.nrows(); ++i ) {
+        std::cout << "  " << M(i, 0);
+        for ( int j = 1; j < M.ncols(); ++j )
+            std::cout << "\t" << M(i, j);
+        std::cout << "\n";
+    }
+}
+
+// Return a n x m matrix full of random values in the interval [0,1).
+Matrix<double> randMatrix ( int n, int m )
+{
+    Matrix<double> M (n, m);
+    for ( int i = 0; i < M.size(); ++i )
+        M[i] = ((double) (rand() % 100000)) / 100000.0;
+    return M;
+}
+
+Matrix<double> randMatrix ( int n ) { return randMatrix(n, 1); }
+
 // Matrix addition with scalar.
 template <typename T, typename U>
 Matrix<T> operator+ ( const Matrix<T>& M, const U& x )
@@ -763,6 +811,14 @@ Matrix<T> operator* ( const Matrix<T>& A, const Matrix<U>& B )
 {
     if ( A.size() == 1 ) return A[0] * B;
     else if ( B.size() == 1 ) return A * B[0];
+    if ( A.ncols() != B.nrows() ) {
+        std::cout << "cannot multiply"
+                  << " (" << A.nrows() << "x" << A.ncols() << ")"
+                  << " with"
+                  << " (" << B.nrows() << "x" << B.ncols() << ")"
+                  << "\n";
+        exit(0);
+    }
     
     int i, j, k;
     Matrix<T> C (A.nrows(), B.ncols());
@@ -828,6 +884,50 @@ Matrix<T> elemDivide ( const Matrix<T>& A, const Matrix<U>& B )
     return C;
 }
 
+// Compute the dot product.
+// If A or B is a scalar, performs scalar multiplication.
+// If A and B are matrices, performs matrix multiplication.
+// If A is a vector and B is a matrix, returns the dot product of
+// A with the last column of B.
+// If A is a matrix and B is a vector, returns the dot product of
+// the last row of A with B.
+template <typename T>
+Matrix<T> dot ( const Matrix<T>& A, const Matrix<T>& B )
+{
+    // 0-D matrix (scalar) - just multiply
+    if ( A.size() == 1 || B.size() == 1 ) return A * B;
+    
+    // both 1-D vectors - vector dot product
+    if ( (A.nrows() == 1 || A.ncols() == 1)
+            && (B.nrows() == 1 || B.ncols() == 1 ) ) {
+        Matrix<T> out (1);
+        out[0] = 0.0;
+        for ( int i = 0; i < A.size() && i < B.size(); ++i )
+            out[0] += A[i] * B[i];
+        return out;
+    }
+    
+    // both 2-D matrices -- matrix multiplication
+    if ( A.nrows() > 1 && A.ncols() > 1
+            && B.nrows() > 1 && B.ncols() > 1 )
+        return A * B;
+    
+    // one 1-D vector, one 2-D matrix
+    // (sum product of a * last column in B)
+    // (sum product of last row in A * b)
+    Matrix<T> out (1);
+    out[0] = 0.0;
+    if ( A.nrows() == 1 || A.ncols() == 1 ) {
+        for ( int i = 0; i < A.size() && i < B.ncols(); ++i )
+            out[0] += A[i] * B(i,B.ncols()-1);
+    }
+    
+    for ( int i = 0; i < B.size() && i < A.ncols(); ++i )
+        out[0] += A(A.nrows()-1,i) * B[i];
+    
+    return out;
+}
+
 // Get the absolute value for each element in the matrix.
 template <typename T>
 Matrix<T> abs ( Matrix<T> M )
@@ -836,9 +936,70 @@ Matrix<T> abs ( Matrix<T> M )
     return M;
 }
 
+// Get the minimum value in the matrix.
+template <typename T>
+T min ( const Matrix<T>& M )
+{
+    T x = M[0];
+    for ( int i = 1; i < M.size(); ++i ) if ( M[i] < x ) x = M[i];
+    return x;
+}
+
+// Get the maximum value in the matrix.
+template <typename T>
+T max ( const Matrix<T>& M )
+{
+    T x = M[0];
+    for ( int i = 1; i < M.size(); ++i ) if ( M[i] > x ) x = M[i];
+    return x;
+}
+
+// Get the sum of all elements in the matrix.
+template <typename T>
+T sum ( const Matrix<T>& M )
+{
+    T x = 0;
+    for ( int i = 0; i < M.size(); ++i ) x += M[i];
+    return x;
+}
+
+// Raise the matrix to the given power. NOTE: the exponent is
+// truncated to the nearest integer toward infinity.
+template <typename T>
+Matrix<T> pow ( const Matrix<T>& M, double x )
+{
+    int n = floor(x);
+    if ( n == 0 ) return M.identity();
+    Matrix<T> A = M;
+    if ( n < 0 ) {
+        A = M.inverse(M.determinant());
+        n *= -1;
+    }
+    if ( n == 1 ) return A;
+    
+    Matrix<T> A2 = A * A;
+    Matrix<T> P = A2;
+    for ( int i = 2; i < n; ) {
+        if ( i*2 <= n ) {
+            P = P*P;
+            i *= 2;
+        }
+        else if ( i+2 <= n ) {
+            P = P * A2;
+            i += 2;
+        }
+        else {
+            P = P * A;
+            ++i;
+        }
+    }
+    
+    return P;
+}
+
 // Raise each element of the matrix to the given power.
 template <typename T>
-Matrix<T> pow ( Matrix<T> M, double x )
+Matrix<T> elemPow ( Matrix<T> M, double x )
 {
     for ( int i = 0; i < M.size(); ++i ) M[i] = pow(M[i], x);
     return M;
@@ -863,6 +1024,76 @@ Matrix<double> cos ( Matrix<double> M )
 Matrix<double> sin ( Matrix<double> M )
 {
     for ( int i = 0; i < M.size(); ++i ) M[i] = sin(M[i]);
+    return M;
+}
+
+// Approximates the matrix exponential using a power series.
+Matrix<double> exp ( const Matrix<double>& M )
+{
+    Matrix<double> A = M;
+    
+    if ( M.size() == 1 ) A[0] = exp(A[0]);
+    else {
+        // power series
+        Matrix<double> Mpow = M.identity();
+        A = Mpow;
+        Matrix<double> A_prev;
+        
+        double diff = 2.0;
+        double factorial = 1.0;
+        
+        for ( int i = 1; diff > 0.000001 && i < 100; ++i ) {
+            A_prev = A;
+            
+            factorial *= i;
+            Mpow = Mpow * M;
+            A = A + Mpow / factorial;
+            
+            diff = fabs(max(A - A_prev));
+        }
+    }
+    
+    return A;
+}
+
+// Compute the exponential for each element in the matrix.
+Matrix<double> elemExp ( Matrix<double> M )
+{
+    for ( int i = 0; i < M.size(); ++i ) M[i] = exp(M[i]);
+    return M;
+}
+
+// Approximate the natural logarithm of a matrix using Taylor
+// expansion.
+// If a vector, instead computes log for each element.
+Matrix<double> log ( const Matrix<double>& M )
+{
+    if ( M.nrows() == 1 || M.ncols() == 1 ) {
+        Matrix<double> A (M);
+        for ( int i = 0; i < M.size(); ++i ) A[i] = log(M[i]);
+        return A;
+    }
+    
+    Matrix<double> A = -1.0 * M;
+    Matrix<double> B = Matrix<double>(M).identity();
+    Matrix<double> MI = M - B;
+    
+    Matrix<double> A_prev;
+    double diff = 2.0;
+    for ( int i = 2; diff > 0.000001 && i < 100; ++i ) {
+        A_prev = A;
+        B = B * MI;
+        A = A + (((double) pow(-1.0, i)) / i) * B;
+        diff = fabs(max(A - A_prev));
+    }
+    
+    return A;
+}
+
+// Compute the natural logarithm for each element in the matrix.
+Matrix<double> elemLog ( Matrix<double> M )
+{
+    for ( int i = 0; i < M.size(); ++i ) M[i] = log(M[i]);
     return M;
 }
 
